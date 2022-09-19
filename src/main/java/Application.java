@@ -101,7 +101,18 @@ public class Application implements IApplication {
     }
 
     public void executeQuery06() {
-        System.out.println("--- executeQuery06 ---");
+         System.out.println("--- executeQuery06 ---");
+        Predicate<Record> severity = record -> record.getSeverity().equals("major") || record.getSeverity().equals("critical");
+        Predicate<Record> attackType = record -> !Objects.equals(record.getAttackType(), "c") || record.getAttackType() != "d" || record.getAttackType() != "e";
+        Predicate<Record> source = record -> record.getSource() == 2;
+        Predicate<Record> shift = record -> record.getShift() == 1;
+        Double result = recordList.stream()
+                        .filter(severity)
+                        .filter(attackType)
+                        .filter(source)
+                        .filter(shift)
+                        .collect(Collectors.averagingLong(Record::getDowntimeInMinutes));
+        System.out.println("result : " + result);
         System.out.println();
     }
 
@@ -113,6 +124,22 @@ public class Application implements IApplication {
 
     public void executeQuery08() {
         System.out.println("--- executeQuery08 ---");
+        Predicate<Record> severity = record -> record.getSeverity().equals("minor") || record.getSeverity().equals("major");
+        Predicate<Record> attackType = record -> record.getAttackType().equals("c");
+        Predicate<Record> source = record -> record.getSource() == 2;
+        Predicate<Record> shift = record -> record.getShift() == 1;
+        Predicate<Record> idBelow500 = record -> record.getId() <= 500;
+
+        List<Integer> result = recordList.stream()
+                        .filter(severity)
+                        .filter(attackType)
+                        .filter(source)
+                        .filter(shift)
+                        .filter(idBelow500)
+                        .sorted(Comparator.comparing(Record::getSeverity)
+                        .reversed())
+                        .map(Record::getId).toList();
+        System.out.println("result : " + result);
         System.out.println();
     }
 
